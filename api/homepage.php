@@ -73,6 +73,14 @@ try {
     // Stats
     $totalProducts = db()->query("SELECT COUNT(*) FROM products WHERE status = 'publish'")->fetchColumn();
     
+    // Get settings for hero, about, contact
+    $settingsStmt = db()->query("SELECT setting_key, setting_value FROM settings");
+    $settingsRaw = $settingsStmt->fetchAll();
+    $settings = [];
+    foreach ($settingsRaw as $row) {
+        $settings[$row['setting_key']] = $row['setting_value'];
+    }
+    
     jsonResponse([
         'data' => [
             'featured_products' => $featured,
@@ -82,7 +90,8 @@ try {
             'stats' => [
                 'total_products' => (int)$totalProducts,
                 'total_categories' => count($categories)
-            ]
+            ],
+            'settings' => $settings
         ]
     ]);
 } catch (PDOException $e) {
