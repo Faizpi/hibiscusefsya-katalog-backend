@@ -314,6 +314,13 @@
                 </a>
             </div>
             
+            <div class="nav-item">
+                <a class="nav-link <?php echo strpos($_SERVER['PHP_SELF'], 'settings') !== false ? 'active' : ''; ?>" href="/admin/settings/index.php">
+                    <i class="fas fa-cog"></i>
+                    <span>Pengaturan Website</span>
+                </a>
+            </div>
+            
             <div class="sidebar-heading">Lainnya</div>
             
             <div class="nav-item">
