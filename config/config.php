@@ -22,10 +22,27 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // CORS Headers for API
 function setCorsHeaders() {
-    header("Access-Control-Allow-Origin: " . FRONTEND_URL);
+    $allowed_origins = [
+        'https://katalog.hibiscusefsya.com',
+        'https://hibiscusefsya.com',
+        'https://www.hibiscusefsya.com',
+        'http://localhost:5173',
+        'http://localhost:3000'
+    ];
+    
+    $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+    
+    if (in_array($origin, $allowed_origins)) {
+        header("Access-Control-Allow-Origin: " . $origin);
+    } else {
+        // Allow all for API endpoints
+        header("Access-Control-Allow-Origin: *");
+    }
+    
     header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-    header("Access-Control-Allow-Headers: Content-Type, Authorization");
+    header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
     header("Access-Control-Allow-Credentials: true");
+    header("Content-Type: application/json");
     
     if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
         http_response_code(200);

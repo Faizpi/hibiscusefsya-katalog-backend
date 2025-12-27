@@ -61,11 +61,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     <style>
         :root {
-            --primary: #D4A574;
-            --primary-dark: #B8956A;
-            --secondary: #8B7355;
-            --dark: #2D2D2D;
-            --light: #FAF8F5;
+            --primary: #DC2626;
+            --primary-dark: #B91C1C;
+            --secondary: #991B1B;
+            --dark: #1A1A1A;
+            --light: #FFFFFF;
         }
         
         * {
@@ -73,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         
         body {
-            background: linear-gradient(135deg, var(--light) 0%, #E8E0D5 100%);
+            background: linear-gradient(135deg, #FFFFFF 0%, #F5F5F5 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;

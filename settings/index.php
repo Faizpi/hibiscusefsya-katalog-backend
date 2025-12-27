@@ -1,11 +1,9 @@
 <?php
-session_start();
-require_once '../config/database.php';
-require_once '../config/config.php';
+require_once __DIR__ . '/../config/config.php';
 
 // Check if logged in
-if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
-    header('Location: ../login.php');
+if (!isLoggedIn()) {
+    header('Location: /login.php');
     exit;
 }
 

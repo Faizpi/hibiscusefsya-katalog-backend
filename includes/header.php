@@ -27,12 +27,12 @@
     <!-- Custom styles -->
     <style>
         :root {
-            --primary: #D4A574;
-            --primary-dark: #B8956A;
-            --secondary: #8B7355;
-            --dark: #2D2D2D;
-            --light: #FAF8F5;
-            --sidebar-bg: #2D2D2D;
+            --primary: #DC2626;
+            --primary-dark: #B91C1C;
+            --secondary: #991B1B;
+            --dark: #1A1A1A;
+            --light: #FFFFFF;
+            --sidebar-bg: #1A1A1A;
         }
         
         * {
@@ -292,7 +292,7 @@
         
         <div class="sidebar-nav">
             <div class="nav-item">
-                <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) === 'index.php' && strpos($_SERVER['PHP_SELF'], 'products') === false && strpos($_SERVER['PHP_SELF'], 'categories') === false ? 'active' : ''; ?>" href="/admin/index.php">
+                <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) === 'index.php' && strpos($_SERVER['PHP_SELF'], 'products') === false && strpos($_SERVER['PHP_SELF'], 'categories') === false && strpos($_SERVER['PHP_SELF'], 'settings') === false ? 'active' : ''; ?>" href="/index.php">
                     <i class="fas fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
@@ -301,21 +301,21 @@
             <div class="sidebar-heading">Manajemen</div>
             
             <div class="nav-item">
-                <a class="nav-link <?php echo strpos($_SERVER['PHP_SELF'], 'products') !== false ? 'active' : ''; ?>" href="/admin/products/index.php">
+                <a class="nav-link <?php echo strpos($_SERVER['PHP_SELF'], 'products') !== false ? 'active' : ''; ?>" href="/products/">
                     <i class="fas fa-box"></i>
                     <span>Produk</span>
                 </a>
             </div>
             
             <div class="nav-item">
-                <a class="nav-link <?php echo strpos($_SERVER['PHP_SELF'], 'categories') !== false ? 'active' : ''; ?>" href="/admin/categories/index.php">
+                <a class="nav-link <?php echo strpos($_SERVER['PHP_SELF'], 'categories') !== false ? 'active' : ''; ?>" href="/categories/">
                     <i class="fas fa-tags"></i>
                     <span>Kategori</span>
                 </a>
             </div>
             
             <div class="nav-item">
-                <a class="nav-link <?php echo strpos($_SERVER['PHP_SELF'], 'settings') !== false ? 'active' : ''; ?>" href="/admin/settings/index.php">
+                <a class="nav-link <?php echo strpos($_SERVER['PHP_SELF'], 'settings') !== false ? 'active' : ''; ?>" href="/settings/">
                     <i class="fas fa-cog"></i>
                     <span>Pengaturan Website</span>
                 </a>
@@ -331,7 +331,7 @@
             </div>
             
             <div class="nav-item">
-                <a class="nav-link" href="/admin/logout.php">
+                <a class="nav-link" href="logout.php">
                     <i class="fas fa-sign-out-alt"></i>
                     <span>Logout</span>
                 </a>
@@ -356,7 +356,7 @@
                         <span class="d-none d-md-inline"><?php echo sanitize($_SESSION['admin_name'] ?? 'Admin'); ?></span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right">
-                        <a class="dropdown-item" href="/admin/logout.php">
+                        <a class="dropdown-item" href="logout.php">
                             <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                             Logout
                         </a>

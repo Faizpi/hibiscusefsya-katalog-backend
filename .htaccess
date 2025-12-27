@@ -1,22 +1,18 @@
 RewriteEngine On
+RewriteBase /
 
 # Redirect to HTTPS
 RewriteCond %{HTTPS} off
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
-# Deny access to config files
-<FilesMatch "\.(php|sql)$">
-    Order Allow,Deny
-    Allow from all
-</FilesMatch>
+# Remove .php extension - serve file.php when accessing /file
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{DOCUMENT_ROOT}/$1.php -f
+RewriteRule ^(.+)$ /$1.php [L,QSA]
 
 # Deny access to hidden files
 <FilesMatch "^\.">
     Order Allow,Deny
     Deny from all
 </FilesMatch>
-
-# Protect config directory (optional - uncomment if needed)
-# <Directory "config">
-#     Deny from all
-# </Directory>
