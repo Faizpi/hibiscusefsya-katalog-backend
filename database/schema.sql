@@ -1,5 +1,6 @@
 -- =====================================================
 -- Hibiscus Efsya Katalog - Database Schema
+-- Kosmetik & Perawatan Tubuh M.B.K Indonesia
 -- =====================================================
 
 CREATE DATABASE IF NOT EXISTS u983003565_api;
@@ -8,6 +9,11 @@ USE u983003565_api;
 -- =====================================================
 -- Table: admins
 -- =====================================================
+DROP TABLE IF EXISTS inspirations;
+DROP TABLE IF EXISTS products;
+DROP TABLE IF EXISTS categories;
+DROP TABLE IF EXISTS admins;
+
 CREATE TABLE IF NOT EXISTS admins (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
@@ -34,12 +40,13 @@ CREATE TABLE IF NOT EXISTS categories (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Insert default categories
+-- Insert categories for M.B.K Products
 INSERT INTO categories (name, slug, description) VALUES
-('Bouquet', 'bouquet', 'Rangkaian bunga dalam bentuk bouquet'),
-('Vas Bunga', 'vas-bunga', 'Rangkaian bunga dengan vas'),
-('Dekorasi', 'dekorasi', 'Dekorasi bunga untuk acara'),
-('Hampers', 'hampers', 'Paket hampers dengan bunga');
+('Deodorant Roll On', 'deodorant-roll-on', 'Deodorant roll on M.B.K untuk menjaga kesegaran tubuh dan mencegah bau badan. Tersedia varian untuk wanita dan pria.'),
+('P.O. Powder', 'po-powder', 'Bedak tabur M.B.K yang efektif menyerap keringat dan menghilangkan bau badan. Terbuat dari tawas, talc, dan parfum berkualitas.'),
+('Bedak Biang Keringat', 'bedak-biang-keringat', 'Bedak khusus untuk mengatasi dan mencegah biang keringat. Cocok untuk segala usia.'),
+('Body Mist', 'body-mist', 'Pewangi tubuh segar dari M.B.K untuk memberikan aroma menyenangkan sepanjang hari.'),
+('Body Lotion', 'body-lotion', 'Lotion pelembab kulit dari M.B.K untuk menjaga kelembaban dan kesehatan kulit.');
 
 -- =====================================================
 -- Table: products
@@ -59,17 +66,34 @@ CREATE TABLE IF NOT EXISTS products (
     FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Insert sample products
+-- Insert M.B.K Products - Deodorant Roll On
 INSERT INTO products (name, slug, description, price, category_id, status, featured) VALUES
-('Rose Elegance Bouquet', 'rose-elegance-bouquet', 'Rangkaian mawar merah premium dengan sentuhan baby breath yang elegan. Cocok untuk hadiah romantis.', 350000, 1, 'publish', 1),
-('Sunflower Joy', 'sunflower-joy', 'Bouquet bunga matahari cerah yang membawa kebahagiaan. Perfect untuk menyemangati orang tersayang.', 275000, 1, 'publish', 1),
-('Lily White Dream', 'lily-white-dream', 'Rangkaian lily putih murni dengan aroma harum. Simbol kesucian dan keanggunan.', 400000, 1, 'publish', 0),
-('Classic Vas Arrangement', 'classic-vas-arrangement', 'Rangkaian bunga campuran dalam vas keramik premium. Dekorasi sempurna untuk ruangan.', 500000, 2, 'publish', 1),
-('Wedding Decoration Set', 'wedding-decoration-set', 'Paket dekorasi bunga untuk pernikahan. Termasuk centerpiece dan dekorasi meja.', 2500000, 3, 'publish', 0),
-('Flower Hampers Gift', 'flower-hampers-gift', 'Hampers eksklusif dengan rangkaian bunga dan cokelat premium.', 750000, 4, 'publish', 1);
+('MBK Deodorant Roll On Pink (Women)', 'mbk-deodorant-roll-on-pink', 'Deodorant roll on khusus wanita dengan warna pink yang feminin. Tahan lama hingga 24 jam, halal, dan aman untuk kulit sensitif. Efektif mencegah bau badan dan menjaga ketiak tetap kering.', 15000, 1, 'publish', 1),
+('MBK Deodorant Roll On Purple (Women)', 'mbk-deodorant-roll-on-purple', 'Deodorant roll on wanita varian purple dengan aroma yang lembut dan tahan lama. Formulasi halal yang aman digunakan sehari-hari.', 15000, 1, 'publish', 1),
+('MBK Deodorant Roll On Black (Men)', 'mbk-deodorant-roll-on-black', 'Deodorant roll on khusus pria dengan desain maskulin warna hitam. Perlindungan maksimal dari bau badan dan keringat berlebih.', 15000, 1, 'publish', 1),
+('MBK Deodorant Roll On Blue (Men)', 'mbk-deodorant-roll-on-blue', 'Deodorant roll on pria varian biru dengan kesegaran ekstra. Cocok untuk pria aktif yang membutuhkan perlindungan sepanjang hari.', 15000, 1, 'publish', 0);
+
+-- Insert M.B.K Products - P.O. Powder
+INSERT INTO products (name, slug, description, price, category_id, status, featured) VALUES
+('MBK P.O. Powder Silver Sachet', 'mbk-po-powder-silver-sachet', 'Bedak tabur M.B.K dalam kemasan sachet praktis. Efektif menyerap keringat berlebih dan menghilangkan bau badan tidak sedap. Terbuat dari tawas, talc, dan parfum berkualitas.', 35000, 2, 'publish', 1),
+('MBK P.O. Powder Putih Tin', 'mbk-po-powder-putih-tin', 'Bedak tabur M.B.K kemasan tin/kaleng yang ekonomis. Halal MUI dan aman digunakan untuk seluruh anggota keluarga. Menjaga kulit tetap kering dan nyaman.', 14000, 2, 'publish', 1),
+('MBK P.O. Powder Putih Sachet', 'mbk-po-powder-putih-sachet', 'Bedak tabur putih M.B.K sachet dengan khasiat halal MUI. Memberikan aroma menyenangkan dan menjaga tubuh tetap segar sepanjang hari.', 26000, 2, 'publish', 0),
+('MBK P.O. Powder Silver Tin Anti Bau', 'mbk-po-powder-silver-tin-anti-bau', 'Varian silver dalam kemasan tin dengan formula anti bau badan yang lebih kuat. Cocok untuk aktivitas berat dan cuaca panas.', 16000, 2, 'publish', 0);
+
+-- Insert M.B.K Products - Bedak Biang Keringat
+INSERT INTO products (name, slug, description, price, category_id, status, featured) VALUES
+('MBK Bedak Biang Keringat Biru Botol', 'mbk-bedak-biang-keringat-biru-botol', 'Bedak biang keringat M.B.K varian biru dalam kemasan botol. Efektif mengatasi dan mencegah biang keringat, memberikan sensasi dingin dan nyaman.', 9000, 3, 'publish', 0),
+('MBK Bedak Biang Keringat Hijau Botol', 'mbk-bedak-biang-keringat-hijau-botol', 'Bedak biang keringat varian hijau dengan aroma menthol yang menyegarkan. Cocok untuk bayi dan dewasa.', 9000, 3, 'publish', 0),
+('MBK Bedak Biang Keringat Hijau Tin', 'mbk-bedak-biang-keringat-hijau-tin', 'Bedak biang keringat kemasan tin dengan formula menthol. Praktis dibawa bepergian.', 9000, 3, 'publish', 0),
+('MBK Bedak Biang Keringat Biru Tin', 'mbk-bedak-biang-keringat-biru-tin', 'Bedak biang keringat varian biru kemasan tin. Cepat menyerap dan memberikan efek dingin.', 9000, 3, 'publish', 0);
+
+-- Insert M.B.K Products - Body Mist & Lotion
+INSERT INTO products (name, slug, description, price, category_id, status, featured) VALUES
+('MBK Body Mist Fresh', 'mbk-body-mist-fresh', 'Body mist M.B.K dengan aroma segar yang tahan lama. Semprot kapan saja untuk kesegaran instan.', 25000, 4, 'publish', 0),
+('MBK Eleven Body Lotion', 'mbk-eleven-body-lotion', 'Body lotion dari lini Eleven M.B.K untuk melembabkan dan menutrisi kulit. Tekstur ringan dan cepat menyerap.', 35000, 5, 'publish', 0);
 
 -- =====================================================
--- Table: inspirations (untuk section inspirasi)
+-- Table: inspirations (untuk section tips)
 -- =====================================================
 CREATE TABLE IF NOT EXISTS inspirations (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -82,8 +106,9 @@ CREATE TABLE IF NOT EXISTS inspirations (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Insert sample inspirations
+-- Insert tips & inspirations
 INSERT INTO inspirations (title, slug, content, status) VALUES
-('Tips Merawat Bunga Potong', 'tips-merawat-bunga-potong', 'Bunga potong bisa bertahan lebih lama dengan perawatan yang tepat. Ganti air setiap hari dan potong batang secara diagonal.', 'publish'),
-('Makna Warna Bunga', 'makna-warna-bunga', 'Setiap warna bunga memiliki makna tersendiri. Merah melambangkan cinta, putih kesucian, dan kuning persahabatan.', 'publish'),
-('Inspirasi Dekorasi Rumah', 'inspirasi-dekorasi-rumah', 'Hadirkan kesegaran dengan rangkaian bunga di sudut ruangan favorit Anda.', 'publish');
+('Tips Mengatasi Bau Badan', 'tips-mengatasi-bau-badan', 'Bau badan disebabkan oleh bakteri yang berkembang di area lembab tubuh. Gunakan deodorant secara teratur dan bedak tabur untuk menyerap keringat berlebih.', 'publish'),
+('Manfaat Bedak Tabur untuk Tubuh', 'manfaat-bedak-tabur', 'Bedak tabur M.B.K membantu menjaga kulit tetap kering, menyerap keringat, dan memberikan aroma harum sepanjang hari. Cocok digunakan setelah mandi.', 'publish'),
+('Cara Memilih Deodorant yang Tepat', 'cara-memilih-deodorant', 'Pilih deodorant yang sesuai dengan jenis kulit Anda. M.B.K menyediakan varian untuk wanita dan pria dengan formula yang aman dan halal.', 'publish');
+
