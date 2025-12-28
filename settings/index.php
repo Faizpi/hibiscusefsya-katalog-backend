@@ -22,6 +22,41 @@ $messageType = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
+        // Handle hero images upload
+        $heroImages = [];
+        $existingHeroImages = json_decode($_POST['existing_hero_images'] ?? '[]', true) ?: [];
+        
+        // Keep existing images that weren't removed
+        foreach ($existingHeroImages as $img) {
+            if (!empty($img)) {
+                $heroImages[] = $img;
+            }
+        }
+        
+        // Upload new hero images
+        if (!empty($_FILES['hero_images']['name'][0])) {
+            $uploadDir = __DIR__ . '/../uploads/hero/';
+            if (!file_exists($uploadDir)) {
+                mkdir($uploadDir, 0755, true);
+            }
+            
+            foreach ($_FILES['hero_images']['tmp_name'] as $key => $tmpName) {
+                if (!empty($tmpName) && is_uploaded_file($tmpName)) {
+                    $originalName = $_FILES['hero_images']['name'][$key];
+                    $ext = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
+                    
+                    if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
+                        $filename = 'hero_' . time() . '_' . $key . '.' . $ext;
+                        $filepath = $uploadDir . $filename;
+                        
+                        if (move_uploaded_file($tmpName, $filepath)) {
+                            $heroImages[] = UPLOAD_URL . 'hero/' . $filename;
+                        }
+                    }
+                }
+            }
+        }
+        
         $settings = [
             'site_name' => $_POST['site_name'] ?? 'Hibiscus Efsya',
             'site_tagline' => $_POST['site_tagline'] ?? 'part of M.B.K Indonesia',
@@ -29,6 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'hero_title' => $_POST['hero_title'] ?? 'Hibiscus Efsya',
             'hero_subtitle' => $_POST['hero_subtitle'] ?? 'part of M.B.K Indonesia',
             'hero_description' => $_POST['hero_description'] ?? '',
+            'hero_images' => json_encode($heroImages),
             'about_title' => $_POST['about_title'] ?? 'Tentang Kami',
             'about_content' => $_POST['about_content'] ?? '',
             'contact_address' => $_POST['contact_address'] ?? '',
@@ -87,6 +123,7 @@ Semua produk M.B.K telah bersertifikat Halal MUI dan aman digunakan untuk seluru
     'social_facebook' => '',
     'social_shopee' => 'https://shopee.co.id/mbkofficialaccount',
     'social_tokopedia' => '',
+    'hero_images' => '[]',
 ];
 
 foreach ($defaults as $key => $value) {
@@ -113,7 +150,7 @@ require_once '../includes/header.php';
 </div>
 <?php endif; ?>
 
-<form method="POST" action="">
+<form method="POST" action="" enctype="multipart/form-data">
     <div class="row">
         <!-- Informasi Umum -->
         <div class="col-lg-6">
@@ -164,6 +201,38 @@ require_once '../includes/header.php';
                     <div class="form-group">
                         <label for="hero_description">Deskripsi Hero</label>
                         <textarea class="form-control" id="hero_description" name="hero_description" rows="4"><?= htmlspecialchars($settings['hero_description']) ?></textarea>
+                    </div>
+                    
+                    <!-- Hero Images Upload -->
+                    <div class="form-group">
+                        <label>Gambar Hero (Card Stack)</label>
+                        <small class="form-text text-muted mb-2">Upload gambar produk untuk ditampilkan di card stack hero. Maksimal 4 gambar.</small>
+                        
+                        <?php 
+                        $heroImagesArr = json_decode($settings['hero_images'] ?? '[]', true) ?: [];
+                        ?>
+                        
+                        <!-- Current Images -->
+                        <div class="row mb-3" id="hero-images-preview">
+                            <?php foreach ($heroImagesArr as $idx => $imgUrl): ?>
+                            <div class="col-3 mb-2 hero-image-item">
+                                <div class="position-relative">
+                                    <img src="<?= htmlspecialchars($imgUrl) ?>" class="img-thumbnail" style="width: 100%; height: 100px; object-fit: cover;">
+                                    <button type="button" class="btn btn-danger btn-sm position-absolute" style="top: 5px; right: 5px;" onclick="removeHeroImage(this, <?= $idx ?>)">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                    <input type="hidden" name="existing_hero_images[]" value="<?= htmlspecialchars($imgUrl) ?>">
+                                </div>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                        
+                        <!-- Upload New -->
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="hero_images" name="hero_images[]" multiple accept="image/*">
+                            <label class="custom-file-label" for="hero_images">Pilih gambar baru...</label>
+                        </div>
+                        <small class="form-text text-muted">Format: JPG, PNG, GIF, WEBP. Bisa pilih beberapa file sekaligus.</small>
                     </div>
                 </div>
             </div>
@@ -272,3 +341,22 @@ require_once '../includes/header.php';
 </form>
 
 <?php require_once '../includes/footer.php'; ?>
+
+<script>
+// Remove hero image
+function removeHeroImage(btn, idx) {
+    const item = btn.closest('.hero-image-item');
+    item.remove();
+}
+
+// Show selected file names
+document.getElementById('hero_images').addEventListener('change', function(e) {
+    const files = Array.from(this.files);
+    const label = this.nextElementSibling;
+    if (files.length > 0) {
+        label.textContent = files.map(f => f.name).join(', ');
+    } else {
+        label.textContent = 'Pilih gambar baru...';
+    }
+});
+</script>
