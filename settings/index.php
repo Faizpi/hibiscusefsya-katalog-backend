@@ -36,9 +36,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         // Upload new hero images
         if (!empty($_FILES['hero_images']['name'][0])) {
-            $uploadDir = __DIR__ . '/../uploads/hero/';
+            // Use absolute path to main uploads folder (not relative)
+            $uploadDir = '/home/u983003565/domains/hibiscusefsya.com/public_html/api/uploads/hero/';
             if (!file_exists($uploadDir)) {
-                mkdir($uploadDir, 0755, true);
+                mkdir($uploadDir, 0777, true);
             }
             
             foreach ($_FILES['hero_images']['tmp_name'] as $key => $tmpName) {
@@ -51,7 +52,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         $filepath = $uploadDir . $filename;
                         
                         if (move_uploaded_file($tmpName, $filepath)) {
-                            $heroImages[] = UPLOAD_URL . 'hero/' . $filename;
+                            // Use API_URL directly for hero images path
+                            $heroImages[] = API_URL . '/uploads/hero/' . $filename;
                         } else {
                             error_log("Failed to move uploaded file: $tmpName to $filepath");
                         }
@@ -62,8 +64,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     error_log("Upload check failed - tmpName: $tmpName, is_uploaded: " . (is_uploaded_file($tmpName) ? 'yes' : 'no'));
                 }
             }
-        } else {
-            error_log("No hero_images in FILES or name[0] is empty. FILES: " . print_r($_FILES, true));
         }
         
         $settings = [
