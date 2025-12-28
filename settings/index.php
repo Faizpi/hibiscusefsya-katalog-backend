@@ -36,8 +36,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         // Upload new hero images
         if (!empty($_FILES['hero_images']['name'][0])) {
-            // Use absolute path to main uploads folder (not relative)
-            $uploadDir = '/home/u983003565/domains/hibiscusefsya.com/public_html/api/uploads/hero/';
+            // Use absolute path to public uploads folder (api.hibiscusefsya.com points to /api/public/)
+            $uploadDir = '/home/u983003565/domains/hibiscusefsya.com/public_html/api/public/uploads/hero/';
             if (!file_exists($uploadDir)) {
                 mkdir($uploadDir, 0777, true);
             }
