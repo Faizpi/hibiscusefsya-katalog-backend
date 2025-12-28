@@ -24,7 +24,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         // Handle hero images upload
         $heroImages = [];
-        $existingHeroImages = json_decode($_POST['existing_hero_images'] ?? '[]', true) ?: [];
+        // existing_hero_images is already an array from form (name="existing_hero_images[]")
+        $existingHeroImages = $_POST['existing_hero_images'] ?? [];
         
         // Keep existing images that weren't removed
         foreach ($existingHeroImages as $img) {
