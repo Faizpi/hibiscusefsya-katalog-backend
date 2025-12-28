@@ -81,6 +81,22 @@ try {
         $settings[$row['setting_key']] = $row['setting_value'];
     }
     
+    // Get hero images from settings or use featured product images
+    $heroImages = [];
+    if (!empty($settings['hero_images'])) {
+        // Hero images stored as JSON array in settings
+        $heroImages = json_decode($settings['hero_images'], true) ?: [];
+    }
+    
+    // If no hero images set, use featured product images as fallback
+    if (empty($heroImages) && !empty($featured)) {
+        foreach ($featured as $prod) {
+            if (!empty($prod['image_url'])) {
+                $heroImages[] = $prod['image_url'];
+            }
+        }
+    }
+    
     jsonResponse([
         'data' => [
             'featured_products' => $featured,
@@ -91,7 +107,8 @@ try {
                 'total_products' => (int)$totalProducts,
                 'total_categories' => count($categories)
             ],
-            'settings' => $settings
+            'settings' => $settings,
+            'hero_images' => $heroImages
         ]
     ]);
 } catch (PDOException $e) {
