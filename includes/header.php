@@ -331,7 +331,7 @@
             </div>
             
             <div class="nav-item">
-                <a class="nav-link" href="logout.php">
+                <a class="nav-link" href="/logout.php">
                     <i class="fas fa-sign-out-alt"></i>
                     <span>Logout</span>
                 </a>
@@ -356,7 +356,7 @@
                         <span class="d-none d-md-inline"><?php echo sanitize($_SESSION['admin_name'] ?? 'Admin'); ?></span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right">
-                        <a class="dropdown-item" href="logout.php">
+                        <a class="dropdown-item" href="/logout.php">
                             <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                             Logout
                         </a>
