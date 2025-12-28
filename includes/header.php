@@ -196,7 +196,7 @@
         
         .card-header {
             background: white;
-            border-bottom: 1px solid #E8E0D5;
+            border-bottom: 1px solid #E5E7EB;
             border-radius: 12px 12px 0 0 !important;
             padding: 1rem 1.25rem;
         }
