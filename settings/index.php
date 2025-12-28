@@ -51,10 +51,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         
                         if (move_uploaded_file($tmpName, $filepath)) {
                             $heroImages[] = UPLOAD_URL . 'hero/' . $filename;
+                        } else {
+                            error_log("Failed to move uploaded file: $tmpName to $filepath");
                         }
+                    } else {
+                        error_log("Invalid extension: $ext for file: $originalName");
                     }
+                } else {
+                    error_log("Upload check failed - tmpName: $tmpName, is_uploaded: " . (is_uploaded_file($tmpName) ? 'yes' : 'no'));
                 }
             }
+        } else {
+            error_log("No hero_images in FILES or name[0] is empty. FILES: " . print_r($_FILES, true));
         }
         
         $settings = [
@@ -206,7 +214,7 @@ require_once '../includes/header.php';
                     <!-- Hero Images Upload -->
                     <div class="form-group">
                         <label>Gambar Hero (Card Stack)</label>
-                        <small class="form-text text-muted mb-2">Upload gambar produk untuk ditampilkan di card stack hero. Maksimal 4 gambar.</small>
+                        <small class="form-text text-muted mb-2">Upload gambar produk untuk ditampilkan di card stack hero. Bisa upload banyak gambar.</small>
                         
                         <?php 
                         $heroImagesArr = json_decode($settings['hero_images'] ?? '[]', true) ?: [];
@@ -215,10 +223,10 @@ require_once '../includes/header.php';
                         <!-- Current Images -->
                         <div class="row mb-3" id="hero-images-preview">
                             <?php foreach ($heroImagesArr as $idx => $imgUrl): ?>
-                            <div class="col-3 mb-2 hero-image-item">
-                                <div class="position-relative">
-                                    <img src="<?= htmlspecialchars($imgUrl) ?>" class="img-thumbnail" style="width: 100%; height: 100px; object-fit: cover;">
-                                    <button type="button" class="btn btn-danger btn-sm position-absolute" style="top: 5px; right: 5px;" onclick="removeHeroImage(this, <?= $idx ?>)">
+                            <div class="col-md-3 col-sm-4 col-6 mb-2 hero-image-item">
+                                <div class="position-relative" style="border: 1px solid #ddd; border-radius: 5px; overflow: hidden;">
+                                    <img src="<?= htmlspecialchars($imgUrl) ?>" class="img-fluid" style="width: 100%; height: 120px; object-fit: cover;">
+                                    <button type="button" class="btn btn-danger btn-sm position-absolute" style="top: 5px; right: 5px; padding: 2px 6px;" onclick="removeHeroImage(this)">
                                         <i class="fas fa-times"></i>
                                     </button>
                                     <input type="hidden" name="existing_hero_images[]" value="<?= htmlspecialchars($imgUrl) ?>">
@@ -228,11 +236,14 @@ require_once '../includes/header.php';
                         </div>
                         
                         <!-- Upload New -->
-                        <div class="custom-file">
+                        <div class="custom-file mb-2">
                             <input type="file" class="custom-file-input" id="hero_images" name="hero_images[]" multiple accept="image/*">
                             <label class="custom-file-label" for="hero_images">Pilih gambar baru...</label>
                         </div>
-                        <small class="form-text text-muted">Format: JPG, PNG, GIF, WEBP. Bisa pilih beberapa file sekaligus.</small>
+                        <small class="form-text text-muted">Format: JPG, PNG, GIF, WEBP. Bisa pilih beberapa file sekaligus. Gambar akan ditampilkan sebagai card stack di hero section.</small>
+                        
+                        <!-- Preview new uploads -->
+                        <div class="row mt-3" id="new-images-preview"></div>
                     </div>
                 </div>
             </div>
@@ -343,20 +354,48 @@ require_once '../includes/header.php';
 <?php require_once '../includes/footer.php'; ?>
 
 <script>
-// Remove hero image
-function removeHeroImage(btn, idx) {
+// Remove hero image (existing)
+function removeHeroImage(btn) {
     const item = btn.closest('.hero-image-item');
     item.remove();
 }
 
-// Show selected file names
+// Show selected file names and preview
 document.getElementById('hero_images').addEventListener('change', function(e) {
     const files = Array.from(this.files);
     const label = this.nextElementSibling;
+    const previewContainer = document.getElementById('new-images-preview');
+    
+    // Update label
     if (files.length > 0) {
-        label.textContent = files.map(f => f.name).join(', ');
+        label.textContent = files.length + ' gambar dipilih: ' + files.map(f => f.name).join(', ');
     } else {
         label.textContent = 'Pilih gambar baru...';
+    }
+    
+    // Show preview
+    previewContainer.innerHTML = '';
+    if (files.length > 0) {
+        const title = document.createElement('div');
+        title.className = 'col-12 mb-2';
+        title.innerHTML = '<small class="text-info"><i class="fas fa-image mr-1"></i>Preview gambar yang akan diupload:</small>';
+        previewContainer.appendChild(title);
+        
+        files.forEach((file, idx) => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const col = document.createElement('div');
+                col.className = 'col-md-3 col-sm-4 col-6 mb-2';
+                col.innerHTML = `
+                    <div style="border: 2px dashed #17a2b8; border-radius: 5px; overflow: hidden;">
+                        <img src="${e.target.result}" class="img-fluid" style="width: 100%; height: 120px; object-fit: cover;">
+                        <div class="text-center small text-muted py-1" style="background: #f8f9fa;">${file.name}</div>
+                    </div>
+                `;
+                previewContainer.appendChild(col);
+            };
+            reader.readAsDataURL(file);
+        });
     }
 });
 </script>
