@@ -25,12 +25,12 @@ try {
         LIMIT 6
     ");
     $featured = $featuredStmt->fetchAll();
-    
+
     foreach ($featured as &$product) {
         $product['image_url'] = $product['image'] ? UPLOAD_URL . $product['image'] : null;
         $product['price_formatted'] = formatRupiah($product['price']);
     }
-    
+
     // Get latest products
     $latestStmt = db()->query("
         SELECT p.id, p.name, p.slug, p.description, p.price, p.image,
@@ -42,12 +42,12 @@ try {
         LIMIT 8
     ");
     $latest = $latestStmt->fetchAll();
-    
+
     foreach ($latest as &$product) {
         $product['image_url'] = $product['image'] ? UPLOAD_URL . $product['image'] : null;
         $product['price_formatted'] = formatRupiah($product['price']);
     }
-    
+
     // Get categories with product count
     $categoriesStmt = db()->query("
         SELECT c.id, c.name, c.slug, c.description,
@@ -59,7 +59,7 @@ try {
         ORDER BY c.name
     ");
     $categories = $categoriesStmt->fetchAll();
-    
+
     // Get inspirations
     $inspirationsStmt = db()->query("
         SELECT id, title, slug, content, image
@@ -69,10 +69,10 @@ try {
         LIMIT 3
     ");
     $inspirations = $inspirationsStmt->fetchAll();
-    
+
     // Stats
     $totalProducts = db()->query("SELECT COUNT(*) FROM products WHERE status = 'publish'")->fetchColumn();
-    
+
     // Get settings for hero, about, contact
     $settingsStmt = db()->query("SELECT setting_key, setting_value FROM settings");
     $settingsRaw = $settingsStmt->fetchAll();
@@ -80,14 +80,14 @@ try {
     foreach ($settingsRaw as $row) {
         $settings[$row['setting_key']] = $row['setting_value'];
     }
-    
+
     // Get hero images from settings or use featured product images
     $heroImages = [];
     if (!empty($settings['hero_images'])) {
         // Hero images stored as JSON array in settings
         $heroImages = json_decode($settings['hero_images'], true) ?: [];
     }
-    
+
     // If no hero images set, use featured product images as fallback
     if (empty($heroImages) && !empty($featured)) {
         foreach ($featured as $prod) {
@@ -96,7 +96,7 @@ try {
             }
         }
     }
-    
+
     jsonResponse([
         'data' => [
             'featured_products' => $featured,
@@ -104,7 +104,7 @@ try {
             'categories' => $categories,
             'inspirations' => $inspirations,
             'stats' => [
-                'total_products' => (int)$totalProducts,
+                'total_products' => (int) $totalProducts,
                 'total_categories' => count($categories)
             ],
             'settings' => $settings,

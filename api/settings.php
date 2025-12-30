@@ -31,7 +31,7 @@ try {
 try {
     $stmt = $db->query("SELECT setting_key, setting_value FROM settings");
     $settings_raw = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
-    
+
     // Organize settings into categories
     $settings = [
         'site' => [
@@ -68,12 +68,12 @@ Produk kami meliputi:
             'tokopedia' => $settings_raw['social_tokopedia'] ?? 'https://tokopedia.com/hibiscusefsya'
         ]
     ];
-    
+
     echo json_encode([
         'success' => true,
         'data' => $settings
     ]);
-    
+
 } catch (PDOException $e) {
     http_response_code(500);
     echo json_encode([

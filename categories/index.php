@@ -8,13 +8,13 @@ requireLogin();
 
 // Handle delete
 if (isset($_POST['delete_id'])) {
-    $id = (int)$_POST['delete_id'];
-    
+    $id = (int) $_POST['delete_id'];
+
     // Check if category has products
     $stmt = db()->prepare("SELECT COUNT(*) FROM products WHERE category_id = ?");
     $stmt->execute([$id]);
     $productCount = $stmt->fetchColumn();
-    
+
     if ($productCount > 0) {
         $error = 'Tidak dapat menghapus kategori yang masih memiliki produk';
     } else {
@@ -27,15 +27,15 @@ if (isset($_POST['delete_id'])) {
 
 // Handle add/edit
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'])) {
-    $id = (int)($_POST['id'] ?? 0);
+    $id = (int) ($_POST['id'] ?? 0);
     $name = sanitize($_POST['name']);
     $slug = sanitize($_POST['slug'] ?? '');
     $description = sanitize($_POST['description'] ?? '');
-    
+
     if (empty($slug)) {
         $slug = generateSlug($name);
     }
-    
+
     if ($id) {
         // Update
         $stmt = db()->prepare("UPDATE categories SET name = ?, slug = ?, description = ? WHERE id = ?");
@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'])) {
         $stmt = db()->prepare("INSERT INTO categories (name, slug, description) VALUES (?, ?, ?)");
         $stmt->execute([$name, $slug, $description]);
     }
-    
+
     header('Location: index.php?saved=1');
     exit();
 }
@@ -72,24 +72,24 @@ include __DIR__ . '/../includes/header.php';
 </div>
 
 <?php if (isset($error)): ?>
-<div class="alert alert-danger alert-dismissible fade show" role="alert">
-    <i class="fas fa-exclamation-circle mr-2"></i><?php echo $error; ?>
-    <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
-</div>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-circle mr-2"></i><?php echo $error; ?>
+        <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
+    </div>
 <?php endif; ?>
 
 <?php if (isset($_GET['deleted'])): ?>
-<div class="alert alert-success alert-dismissible fade show" role="alert">
-    <i class="fas fa-check-circle mr-2"></i>Kategori berhasil dihapus
-    <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
-</div>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle mr-2"></i>Kategori berhasil dihapus
+        <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
+    </div>
 <?php endif; ?>
 
 <?php if (isset($_GET['saved'])): ?>
-<div class="alert alert-success alert-dismissible fade show" role="alert">
-    <i class="fas fa-check-circle mr-2"></i>Kategori berhasil disimpan
-    <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
-</div>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle mr-2"></i>Kategori berhasil disimpan
+        <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
+    </div>
 <?php endif; ?>
 
 <!-- Categories Table -->
@@ -108,26 +108,27 @@ include __DIR__ . '/../includes/header.php';
                 </thead>
                 <tbody>
                     <?php foreach ($categories as $category): ?>
-                    <tr>
-                        <td><strong><?php echo sanitize($category['name']); ?></strong></td>
-                        <td><code><?php echo sanitize($category['slug']); ?></code></td>
-                        <td><?php echo sanitize($category['description']) ?: '-'; ?></td>
-                        <td><span class="badge badge-primary"><?php echo $category['product_count']; ?> produk</span></td>
-                        <td>
-                            <button type="button" class="btn btn-sm btn-outline-primary" 
+                        <tr>
+                            <td><strong><?php echo sanitize($category['name']); ?></strong></td>
+                            <td><code><?php echo sanitize($category['slug']); ?></code></td>
+                            <td><?php echo sanitize($category['description']) ?: '-'; ?></td>
+                            <td><span class="badge badge-primary"><?php echo $category['product_count']; ?> produk</span>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-outline-primary"
                                     onclick="editCategory(<?php echo htmlspecialchars(json_encode($category)); ?>)">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <?php if ($category['product_count'] == 0): ?>
-                            <form method="POST" style="display: inline;" onsubmit="return confirmDelete(this)">
-                                <input type="hidden" name="delete_id" value="<?php echo $category['id']; ?>">
-                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Hapus">
-                                    <i class="fas fa-trash"></i>
+                                    <i class="fas fa-edit"></i>
                                 </button>
-                            </form>
-                            <?php endif; ?>
-                        </td>
-                    </tr>
+                                <?php if ($category['product_count'] == 0): ?>
+                                    <form method="POST" style="display: inline;" onsubmit="return confirmDelete(this)">
+                                        <input type="hidden" name="delete_id" value="<?php echo $category['id']; ?>">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Hapus">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
@@ -148,19 +149,19 @@ include __DIR__ . '/../includes/header.php';
                 </div>
                 <div class="modal-body">
                     <input type="hidden" name="id" id="categoryId">
-                    
+
                     <div class="form-group">
                         <label>Nama Kategori <span class="text-danger">*</span></label>
                         <input type="text" name="name" id="categoryName" class="form-control" required
-                               onkeyup="generateCategorySlug(this.value)">
+                            onkeyup="generateCategorySlug(this.value)">
                     </div>
-                    
+
                     <div class="form-group">
                         <label>Slug</label>
                         <input type="text" name="slug" id="categorySlug" class="form-control">
                         <small class="text-muted">URL friendly. Kosongkan untuk auto-generate.</small>
                     </div>
-                    
+
                     <div class="form-group">
                         <label>Deskripsi</label>
                         <textarea name="description" id="categoryDescription" class="form-control" rows="3"></textarea>
@@ -176,31 +177,31 @@ include __DIR__ . '/../includes/header.php';
 </div>
 
 <script>
-function generateCategorySlug(text) {
-    var slug = text.toLowerCase()
-        .replace(/[^a-z0-9\s-]/g, '')
-        .replace(/[\s-]+/g, '-')
-        .replace(/^-+|-+$/g, '');
-    document.getElementById('categorySlug').value = slug;
-}
+    function generateCategorySlug(text) {
+        var slug = text.toLowerCase()
+            .replace(/[^a-z0-9\s-]/g, '')
+            .replace(/[\s-]+/g, '-')
+            .replace(/^-+|-+$/g, '');
+        document.getElementById('categorySlug').value = slug;
+    }
 
-function editCategory(category) {
-    document.getElementById('modalTitle').textContent = 'Edit Kategori';
-    document.getElementById('categoryId').value = category.id;
-    document.getElementById('categoryName').value = category.name;
-    document.getElementById('categorySlug').value = category.slug;
-    document.getElementById('categoryDescription').value = category.description || '';
-    $('#categoryModal').modal('show');
-}
+    function editCategory(category) {
+        document.getElementById('modalTitle').textContent = 'Edit Kategori';
+        document.getElementById('categoryId').value = category.id;
+        document.getElementById('categoryName').value = category.name;
+        document.getElementById('categorySlug').value = category.slug;
+        document.getElementById('categoryDescription').value = category.description || '';
+        $('#categoryModal').modal('show');
+    }
 
-// Reset modal on close
-$('#categoryModal').on('hidden.bs.modal', function() {
-    document.getElementById('modalTitle').textContent = 'Tambah Kategori';
-    document.getElementById('categoryId').value = '';
-    document.getElementById('categoryName').value = '';
-    document.getElementById('categorySlug').value = '';
-    document.getElementById('categoryDescription').value = '';
-});
+    // Reset modal on close
+    $('#categoryModal').on('hidden.bs.modal', function () {
+        document.getElementById('modalTitle').textContent = 'Tambah Kategori';
+        document.getElementById('categoryId').value = '';
+        document.getElementById('categoryName').value = '';
+        document.getElementById('categorySlug').value = '';
+        document.getElementById('categoryDescription').value = '';
+    });
 </script>
 
 <?php include __DIR__ . '/../includes/footer.php'; ?>

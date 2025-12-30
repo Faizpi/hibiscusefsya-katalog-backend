@@ -20,8 +20,8 @@ $slug = $_GET['slug'] ?? null;
 $category = $_GET['category'] ?? null;
 $featured = isset($_GET['featured']) ? true : false;
 $search = $_GET['search'] ?? null;
-$page = max(1, (int)($_GET['page'] ?? 1));
-$limit = min(50, max(1, (int)($_GET['limit'] ?? 12)));
+$page = max(1, (int) ($_GET['page'] ?? 1));
+$limit = min(50, max(1, (int) ($_GET['limit'] ?? 12)));
 $offset = ($page - 1) * $limit;
 
 try {
@@ -47,17 +47,17 @@ try {
             } else {
                 jsonResponse(['error' => 'ID or slug required'], 400);
             }
-            
+
             $product = $stmt->fetch();
-            
+
             if (!$product) {
                 jsonResponse(['error' => 'Product not found'], 404);
             }
-            
+
             // Add image URL
             $product['image_url'] = $product['image'] ? UPLOAD_URL . $product['image'] : null;
             $product['price_formatted'] = formatRupiah($product['price']);
-            
+
             // Get related products
             $relatedStmt = db()->prepare("
                 SELECT id, name, slug, price, image
@@ -68,40 +68,40 @@ try {
             ");
             $relatedStmt->execute([$product['category_id'], $product['id']]);
             $related = $relatedStmt->fetchAll();
-            
+
             foreach ($related as &$item) {
                 $item['image_url'] = $item['image'] ? UPLOAD_URL . $item['image'] : null;
                 $item['price_formatted'] = formatRupiah($item['price']);
             }
-            
+
             $product['related_products'] = $related;
-            
+
             jsonResponse(['data' => $product]);
             break;
-            
+
         case 'list':
         default:
             // Build query
             $where = ["p.status = 'publish'"];
             $params = [];
-            
+
             if ($category) {
                 $where[] = "c.slug = ?";
                 $params[] = $category;
             }
-            
+
             if ($featured) {
                 $where[] = "p.featured = 1";
             }
-            
+
             if ($search) {
                 $where[] = "(p.name LIKE ? OR p.description LIKE ?)";
                 $params[] = "%$search%";
                 $params[] = "%$search%";
             }
-            
+
             $whereClause = implode(' AND ', $where);
-            
+
             // Get total count
             $countStmt = db()->prepare("
                 SELECT COUNT(*) 
@@ -111,11 +111,11 @@ try {
             ");
             $countStmt->execute($params);
             $total = $countStmt->fetchColumn();
-            
+
             // Get products
             $params[] = $limit;
             $params[] = $offset;
-            
+
             $stmt = db()->prepare("
                 SELECT p.id, p.name, p.slug, p.description, p.price, p.image, 
                        p.featured, p.created_at,
@@ -128,19 +128,19 @@ try {
             ");
             $stmt->execute($params);
             $products = $stmt->fetchAll();
-            
+
             // Add image URLs and formatted prices
             foreach ($products as &$product) {
                 $product['image_url'] = $product['image'] ? UPLOAD_URL . $product['image'] : null;
                 $product['price_formatted'] = formatRupiah($product['price']);
             }
-            
+
             $totalPages = ceil($total / $limit);
-            
+
             jsonResponse([
                 'data' => $products,
                 'meta' => [
-                    'total' => (int)$total,
+                    'total' => (int) $total,
                     'page' => $page,
                     'limit' => $limit,
                     'total_pages' => $totalPages,

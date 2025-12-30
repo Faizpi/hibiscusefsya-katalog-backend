@@ -113,53 +113,56 @@ include __DIR__ . '/includes/header.php';
             </div>
             <div class="card-body">
                 <?php if (count($recentProducts) > 0): ?>
-                <div class="table-responsive">
-                    <table class="table table-borderless">
-                        <thead>
-                            <tr>
-                                <th>Produk</th>
-                                <th>Kategori</th>
-                                <th>Harga</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($recentProducts as $product): ?>
-                            <tr>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <?php if ($product['image']): ?>
-                                        <img src="<?php echo UPLOAD_URL . $product['image']; ?>" 
-                                             alt="<?php echo sanitize($product['name']); ?>"
-                                             class="rounded mr-3" style="width: 40px; height: 40px; object-fit: cover;">
-                                        <?php else: ?>
-                                        <div class="rounded mr-3 bg-light d-flex align-items-center justify-content-center" 
-                                             style="width: 40px; height: 40px;">
-                                            <i class="fas fa-image text-gray-400"></i>
-                                        </div>
-                                        <?php endif; ?>
-                                        <span class="font-weight-medium"><?php echo sanitize($product['name']); ?></span>
-                                    </div>
-                                </td>
-                                <td><span class="badge badge-light"><?php echo $product['category_name'] ?? 'Uncategorized'; ?></span></td>
-                                <td><?php echo formatRupiah($product['price']); ?></td>
-                                <td>
-                                    <?php if ($product['status'] === 'publish'): ?>
-                                    <span class="badge badge-success">Publish</span>
-                                    <?php else: ?>
-                                    <span class="badge badge-warning">Draft</span>
-                                    <?php endif; ?>
-                                </td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
+                    <div class="table-responsive">
+                        <table class="table table-borderless">
+                            <thead>
+                                <tr>
+                                    <th>Produk</th>
+                                    <th>Kategori</th>
+                                    <th>Harga</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($recentProducts as $product): ?>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <?php if ($product['image']): ?>
+                                                    <img src="<?php echo UPLOAD_URL . $product['image']; ?>"
+                                                        alt="<?php echo sanitize($product['name']); ?>" class="rounded mr-3"
+                                                        style="width: 40px; height: 40px; object-fit: cover;">
+                                                <?php else: ?>
+                                                    <div class="rounded mr-3 bg-light d-flex align-items-center justify-content-center"
+                                                        style="width: 40px; height: 40px;">
+                                                        <i class="fas fa-image text-gray-400"></i>
+                                                    </div>
+                                                <?php endif; ?>
+                                                <span
+                                                    class="font-weight-medium"><?php echo sanitize($product['name']); ?></span>
+                                            </div>
+                                        </td>
+                                        <td><span
+                                                class="badge badge-light"><?php echo $product['category_name'] ?? 'Uncategorized'; ?></span>
+                                        </td>
+                                        <td><?php echo formatRupiah($product['price']); ?></td>
+                                        <td>
+                                            <?php if ($product['status'] === 'publish'): ?>
+                                                <span class="badge badge-success">Publish</span>
+                                            <?php else: ?>
+                                                <span class="badge badge-warning">Draft</span>
+                                            <?php endif; ?>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
                 <?php else: ?>
-                <div class="text-center py-4">
-                    <i class="fas fa-box-open fa-3x text-gray-300 mb-3"></i>
-                    <p class="text-gray-500 mb-0">Belum ada produk</p>
-                </div>
+                    <div class="text-center py-4">
+                        <i class="fas fa-box-open fa-3x text-gray-300 mb-3"></i>
+                        <p class="text-gray-500 mb-0">Belum ada produk</p>
+                    </div>
                 <?php endif; ?>
             </div>
         </div>
@@ -187,7 +190,7 @@ include __DIR__ . '/includes/header.php';
                 </a>
             </div>
         </div>
-        
+
         <!-- Info Card -->
         <div class="card shadow mb-4 bg-gradient-primary text-white">
             <div class="card-body">

@@ -10,9 +10,9 @@ try {
         setting_value TEXT,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
-    
+
     echo "Settings table created!\n";
-    
+
     // Insert default settings
     $defaults = [
         'site_name' => 'Hibiscus Efsya',
@@ -32,15 +32,15 @@ try {
         'social_shopee' => 'https://shopee.co.id/hibiscusefsya',
         'social_tokopedia' => 'https://tokopedia.com/hibiscusefsya'
     ];
-    
+
     $stmt = db()->prepare("INSERT IGNORE INTO settings (setting_key, setting_value) VALUES (?, ?)");
     foreach ($defaults as $key => $value) {
         $stmt->execute([$key, $value]);
     }
-    
+
     echo "Default settings inserted!\n";
     echo "\nDone! You can now access the admin panel.\n";
-    
+
 } catch (PDOException $e) {
     echo "Error: " . $e->getMessage() . "\n";
 }

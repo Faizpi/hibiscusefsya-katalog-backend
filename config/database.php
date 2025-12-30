@@ -22,11 +22,13 @@ define('UPLOAD_URL', API_URL . '/uploads/products/');
 define('SESSION_NAME', 'hibiscus_admin_session');
 define('SESSION_LIFETIME', 3600); // 1 hour
 
-class Database {
+class Database
+{
     private static $instance = null;
     private $connection;
 
-    private function __construct() {
+    private function __construct()
+    {
         try {
             $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=" . DB_CHARSET;
             $options = [
@@ -40,22 +42,27 @@ class Database {
         }
     }
 
-    public static function getInstance() {
+    public static function getInstance()
+    {
         if (self::$instance === null) {
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    public function getConnection() {
+    public function getConnection()
+    {
         return $this->connection;
     }
 
     // Prevent cloning
-    private function __clone() {}
+    private function __clone()
+    {
+    }
 }
 
 // Helper function
-function db() {
+function db()
+{
     return Database::getInstance()->getConnection();
 }

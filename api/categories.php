@@ -25,7 +25,7 @@ try {
         ORDER BY c.name
     ");
     $categories = $stmt->fetchAll();
-    
+
     jsonResponse(['data' => $categories]);
 } catch (PDOException $e) {
     jsonResponse(['error' => 'Database error'], 500);
