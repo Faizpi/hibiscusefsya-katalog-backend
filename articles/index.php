@@ -79,7 +79,7 @@ include __DIR__ . '/../includes/header.php';
                         <tr>
                             <td>
                                 <?php if ($article['image']): ?>
-                                    <img src="<?php echo UPLOAD_URL . 'articles/' . $article['image']; ?>"
+                                    <img src="<?php echo UPLOAD_URL_ARTICLES . $article['image']; ?>"
                                         alt="<?php echo sanitize($article['title']); ?>" class="rounded"
                                         style="width: 80px; height: 50px; object-fit: cover;">
                                 <?php else: ?>
