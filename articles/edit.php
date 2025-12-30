@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Handle image upload
     $newImage = null;
     if (!empty($_FILES['image']['name'])) {
-        $uploadDir = UPLOAD_PATH . 'articles/';
+        $uploadDir = UPLOAD_PATH_ARTICLES;
         if (!file_exists($uploadDir)) {
             mkdir($uploadDir, 0755, true);
         }
