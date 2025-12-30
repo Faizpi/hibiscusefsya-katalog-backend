@@ -69,6 +69,13 @@ try {
         LIMIT 3
     ");
     $inspirations = $inspirationsStmt->fetchAll();
+    
+    // Add image_url for inspirations
+    foreach ($inspirations as &$inspiration) {
+        $inspiration['image_url'] = $inspiration['image'] 
+            ? UPLOAD_URL_ARTICLES . $inspiration['image'] 
+            : null;
+    }
 
     // Stats
     $totalProducts = db()->query("SELECT COUNT(*) FROM products WHERE status = 'publish'")->fetchColumn();

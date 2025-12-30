@@ -17,6 +17,8 @@ define('FRONTEND_URL', 'https://katalog.hibiscusefsya.com');
 // Upload Path
 define('UPLOAD_PATH', __DIR__ . '/../uploads/products/');
 define('UPLOAD_URL', API_URL . '/uploads/products/');
+define('UPLOAD_PATH_ARTICLES', __DIR__ . '/../uploads/articles/');
+define('UPLOAD_URL_ARTICLES', API_URL . '/uploads/articles/');
 
 // Session Configuration
 define('SESSION_NAME', 'hibiscus_admin_session');
