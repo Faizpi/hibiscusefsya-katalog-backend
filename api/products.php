@@ -60,7 +60,7 @@ try {
 
             // Get related products
             $relatedStmt = db()->prepare("
-                SELECT id, name, slug, price, image
+                SELECT id, name, slug, price, image, shopee_link, tokopedia_link
                 FROM products
                 WHERE category_id = ? AND id != ? AND status = 'publish'
                 ORDER BY RAND()
@@ -118,6 +118,7 @@ try {
 
             $stmt = db()->prepare("
                 SELECT p.id, p.name, p.slug, p.description, p.price, p.image, 
+                       p.shopee_link, p.tokopedia_link,
                        p.featured, p.created_at,
                        c.name as category_name, c.slug as category_slug
                 FROM products p

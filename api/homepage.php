@@ -17,6 +17,7 @@ try {
     // Get featured products
     $featuredStmt = db()->query("
         SELECT p.id, p.name, p.slug, p.description, p.price, p.image,
+               p.shopee_link, p.tokopedia_link,
                c.name as category_name, c.slug as category_slug
         FROM products p
         LEFT JOIN categories c ON p.category_id = c.id
@@ -34,6 +35,7 @@ try {
     // Get latest products
     $latestStmt = db()->query("
         SELECT p.id, p.name, p.slug, p.description, p.price, p.image,
+               p.shopee_link, p.tokopedia_link,
                c.name as category_name, c.slug as category_slug
         FROM products p
         LEFT JOIN categories c ON p.category_id = c.id
@@ -62,19 +64,25 @@ try {
 
     // Get inspirations
     $inspirationsStmt = db()->query("
-        SELECT id, title, slug, content, image
+        SELECT id, title, slug, excerpt, content, image
         FROM inspirations
         WHERE status = 'publish'
         ORDER BY created_at DESC
         LIMIT 3
     ");
     $inspirations = $inspirationsStmt->fetchAll();
-    
+
     // Add image_url for inspirations
     foreach ($inspirations as &$inspiration) {
-        $inspiration['image_url'] = $inspiration['image'] 
-            ? UPLOAD_URL_ARTICLES . $inspiration['image'] 
+        $inspiration['image_url'] = $inspiration['image']
+            ? UPLOAD_URL_ARTICLES . $inspiration['image']
             : null;
+        // Use excerpt for preview text if available, otherwise truncate content
+        $inspiration['preview_text'] = !empty($inspiration['excerpt'])
+            ? $inspiration['excerpt']
+            : (strlen($inspiration['content']) > 150
+                ? substr($inspiration['content'], 0, 150) . '...'
+                : $inspiration['content']);
     }
 
     // Stats
