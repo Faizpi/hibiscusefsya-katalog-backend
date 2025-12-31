@@ -21,6 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $category_id = !empty($_POST['category_id']) ? (int)$_POST['category_id'] : null;
     $status = sanitize($_POST['status'] ?? 'draft');
     $featured = isset($_POST['featured']) ? 1 : 0;
+    $shopee_link = sanitize($_POST['shopee_link'] ?? '');
+    $tokopedia_link = sanitize($_POST['tokopedia_link'] ?? '');
     
     // Generate slug if empty
     if (empty($slug)) {
@@ -66,10 +68,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (empty($error)) {
             try {
                 $stmt = db()->prepare("
-                    INSERT INTO products (name, slug, description, price, category_id, image, status, featured)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                    INSERT INTO products (name, slug, description, price, category_id, image, shopee_link, tokopedia_link, status, featured)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ");
-                $stmt->execute([$name, $slug, $description, $price, $category_id, $imageName, $status, $featured]);
+                $stmt->execute([$name, $slug, $description, $price, $category_id, $imageName, $shopee_link, $tokopedia_link, $status, $featured]);
                 
                 header('Location: index.php?saved=1');
                 exit();
@@ -159,6 +161,25 @@ include __DIR__ . '/../includes/header.php';
                         </div>
                         <small class="text-muted">Format: JPG, PNG, WebP. Maks 2MB.</small>
                         <div id="imagePreview" class="mt-3"></div>
+                    </div>
+                    
+                    <hr>
+                    <h6 class="text-primary mb-3"><i class="fas fa-shopping-cart mr-2"></i>Link Marketplace</h6>
+                    
+                    <div class="form-group">
+                        <label><img src="https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/assets/icon_favicon_1_32.png" width="20" class="mr-2">Link Shopee</label>
+                        <input type="url" name="shopee_link" class="form-control" 
+                               value="<?php echo sanitize($_POST['shopee_link'] ?? ''); ?>"
+                               placeholder="https://shopee.co.id/...">
+                        <small class="text-muted">Masukkan link produk di Shopee (opsional)</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><img src="https://images.tokopedia.net/img/favicon.png" width="20" class="mr-2">Link Tokopedia</label>
+                        <input type="url" name="tokopedia_link" class="form-control" 
+                               value="<?php echo sanitize($_POST['tokopedia_link'] ?? ''); ?>"
+                               placeholder="https://www.tokopedia.com/...">
+                        <small class="text-muted">Masukkan link produk di Tokopedia (opsional)</small>
                     </div>
                     
                     <hr>
