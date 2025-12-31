@@ -10,6 +10,7 @@ $errors = [];
 $article = [
     'title' => '',
     'slug' => '',
+    'excerpt' => '',
     'content' => '',
     'status' => 'draft'
 ];
@@ -18,6 +19,7 @@ $article = [
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $article['title'] = trim($_POST['title'] ?? '');
     $article['slug'] = trim($_POST['slug'] ?? '');
+    $article['excerpt'] = trim($_POST['excerpt'] ?? '');
     $article['content'] = trim($_POST['content'] ?? '');
     $article['status'] = $_POST['status'] ?? 'draft';
 
@@ -28,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Auto generate slug if empty
     if (empty($article['slug'])) {
-        $article['slug'] = createSlug($article['title']);
+        $article['slug'] = generateSlug($article['title']);
     }
 
     // Check slug uniqueness
@@ -56,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $ext = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
             $imageName = 'article_' . time() . '_' . uniqid() . '.' . $ext;
-            
+
             if (!move_uploaded_file($_FILES['image']['tmp_name'], $uploadDir . $imageName)) {
                 $errors[] = 'Gagal mengupload gambar';
                 $imageName = null;
@@ -67,12 +69,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Save to database
     if (empty($errors)) {
         $stmt = db()->prepare("
-            INSERT INTO inspirations (title, slug, content, image, status)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO inspirations (title, slug, excerpt, content, image, status)
+            VALUES (?, ?, ?, ?, ?, ?)
         ");
         $stmt->execute([
             $article['title'],
             $article['slug'],
+            $article['excerpt'],
             $article['content'],
             $imageName,
             $article['status']
@@ -119,14 +122,22 @@ include __DIR__ . '/../includes/header.php';
                     <div class="form-group">
                         <label for="slug">Slug URL</label>
                         <input type="text" class="form-control" id="slug" name="slug"
-                            value="<?php echo sanitize($article['slug']); ?>"
-                            placeholder="auto-generate dari judul">
+                            value="<?php echo sanitize($article['slug']); ?>" placeholder="auto-generate dari judul">
                         <small class="form-text text-muted">Biarkan kosong untuk generate otomatis</small>
                     </div>
 
                     <div class="form-group">
+                        <label for="excerpt">Ringkasan/Sub Judul <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="excerpt" name="excerpt" rows="3" required
+                            placeholder="Tulis ringkasan singkat yang akan ditampilkan di homepage..."><?php echo sanitize($article['excerpt']); ?></textarea>
+                        <small class="form-text text-muted">Teks singkat yang akan muncul di kartu artikel (maksimal 200
+                            karakter)</small>
+                    </div>
+
+                    <div class="form-group">
                         <label for="content">Konten Artikel</label>
-                        <textarea class="form-control" id="content" name="content" rows="10"><?php echo sanitize($article['content']); ?></textarea>
+                        <textarea class="form-control" id="content" name="content"
+                            rows="10"><?php echo sanitize($article['content']); ?></textarea>
                         <small class="form-text text-muted">Tulis konten lengkap artikel di sini</small>
                     </div>
                 </div>
@@ -145,8 +156,10 @@ include __DIR__ . '/../includes/header.php';
                     <div class="form-group">
                         <label for="status">Status</label>
                         <select class="form-control" id="status" name="status">
-                            <option value="draft" <?php echo $article['status'] === 'draft' ? 'selected' : ''; ?>>Draft</option>
-                            <option value="publish" <?php echo $article['status'] === 'publish' ? 'selected' : ''; ?>>Published</option>
+                            <option value="draft" <?php echo $article['status'] === 'draft' ? 'selected' : ''; ?>>Draft
+                            </option>
+                            <option value="publish" <?php echo $article['status'] === 'publish' ? 'selected' : ''; ?>>
+                                Published</option>
                         </select>
                     </div>
                 </div>
@@ -165,35 +178,35 @@ include __DIR__ . '/../includes/header.php';
 </div>
 
 <script>
-// Auto generate slug from title
-document.getElementById('title').addEventListener('blur', function() {
-    const slugField = document.getElementById('slug');
-    if (slugField.value === '') {
-        slugField.value = this.value
-            .toLowerCase()
-            .replace(/[^a-z0-9\s-]/g, '')
-            .replace(/\s+/g, '-')
-            .replace(/-+/g, '-')
-            .trim();
-    }
-});
+    // Auto generate slug from title
+    document.getElementById('title').addEventListener('blur', function () {
+        const slugField = document.getElementById('slug');
+        if (slugField.value === '') {
+            slugField.value = this.value
+                .toLowerCase()
+                .replace(/[^a-z0-9\s-]/g, '')
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-')
+                .trim();
+        }
+    });
 
-// Image preview
-document.getElementById('image').addEventListener('change', function(e) {
-    const preview = document.getElementById('imagePreview');
-    const file = e.target.files[0];
-    
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            preview.innerHTML = '<img src="' + e.target.result + '" class="img-fluid rounded" style="max-height: 200px;">';
-        };
-        reader.readAsDataURL(file);
-        
-        // Update label
-        e.target.nextElementSibling.textContent = file.name;
-    }
-});
+    // Image preview
+    document.getElementById('image').addEventListener('change', function (e) {
+        const preview = document.getElementById('imagePreview');
+        const file = e.target.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                preview.innerHTML = '<img src="' + e.target.result + '" class="img-fluid rounded" style="max-height: 200px;">';
+            };
+            reader.readAsDataURL(file);
+
+            // Update label
+            e.target.nextElementSibling.textContent = file.name;
+        }
+    });
 </script>
 
 <?php include __DIR__ . '/../includes/footer.php'; ?>

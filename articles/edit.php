@@ -24,6 +24,7 @@ $errors = [];
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $article['title'] = trim($_POST['title'] ?? '');
     $article['slug'] = trim($_POST['slug'] ?? '');
+    $article['excerpt'] = trim($_POST['excerpt'] ?? '');
     $article['content'] = trim($_POST['content'] ?? '');
     $article['status'] = $_POST['status'] ?? 'draft';
 
@@ -34,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Auto generate slug if empty
     if (empty($article['slug'])) {
-        $article['slug'] = createSlug($article['title']);
+        $article['slug'] = generateSlug($article['title']);
     }
 
     // Check slug uniqueness (exclude current)
@@ -62,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $ext = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
             $newImage = 'article_' . time() . '_' . uniqid() . '.' . $ext;
-            
+
             if (!move_uploaded_file($_FILES['image']['tmp_name'], $uploadDir . $newImage)) {
                 $errors[] = 'Gagal mengupload gambar';
                 $newImage = null;
@@ -77,8 +78,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Save to database
     if (empty($errors)) {
-        $sql = "UPDATE inspirations SET title = ?, slug = ?, content = ?, status = ?";
-        $params = [$article['title'], $article['slug'], $article['content'], $article['status']];
+        $sql = "UPDATE inspirations SET title = ?, slug = ?, excerpt = ?, content = ?, status = ?";
+        $params = [$article['title'], $article['slug'], $article['excerpt'], $article['content'], $article['status']];
 
         if ($newImage) {
             $sql .= ", image = ?";
@@ -137,8 +138,17 @@ include __DIR__ . '/../includes/header.php';
                     </div>
 
                     <div class="form-group">
+                        <label for="excerpt">Ringkasan/Sub Judul <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="excerpt" name="excerpt" rows="3" required
+                            placeholder="Tulis ringkasan singkat yang akan ditampilkan di homepage..."><?php echo sanitize($article['excerpt'] ?? ''); ?></textarea>
+                        <small class="form-text text-muted">Teks singkat yang akan muncul di kartu artikel (maksimal 200
+                            karakter)</small>
+                    </div>
+
+                    <div class="form-group">
                         <label for="content">Konten Artikel</label>
-                        <textarea class="form-control" id="content" name="content" rows="12"><?php echo sanitize($article['content']); ?></textarea>
+                        <textarea class="form-control" id="content" name="content"
+                            rows="12"><?php echo sanitize($article['content']); ?></textarea>
                         <small class="form-text text-muted">Tulis konten lengkap artikel di sini</small>
                     </div>
                 </div>
@@ -148,9 +158,9 @@ include __DIR__ . '/../includes/header.php';
                         <label>Gambar Saat Ini</label>
                         <?php if ($article['image']): ?>
                             <div class="mb-2">
-                                <img src="<?php echo UPLOAD_URL . 'articles/' . $article['image']; ?>" 
-                                    alt="<?php echo sanitize($article['title']); ?>"
-                                    class="img-fluid rounded" style="max-height: 200px;">
+                                <img src="<?php echo UPLOAD_URL . 'articles/' . $article['image']; ?>"
+                                    alt="<?php echo sanitize($article['title']); ?>" class="img-fluid rounded"
+                                    style="max-height: 200px;">
                             </div>
                         <?php else: ?>
                             <div class="bg-light rounded d-flex align-items-center justify-content-center mb-2"
@@ -173,8 +183,10 @@ include __DIR__ . '/../includes/header.php';
                     <div class="form-group">
                         <label for="status">Status</label>
                         <select class="form-control" id="status" name="status">
-                            <option value="draft" <?php echo $article['status'] === 'draft' ? 'selected' : ''; ?>>Draft</option>
-                            <option value="publish" <?php echo $article['status'] === 'publish' ? 'selected' : ''; ?>>Published</option>
+                            <option value="draft" <?php echo $article['status'] === 'draft' ? 'selected' : ''; ?>>Draft
+                            </option>
+                            <option value="publish" <?php echo $article['status'] === 'publish' ? 'selected' : ''; ?>>
+                                Published</option>
                         </select>
                     </div>
                 </div>
@@ -193,22 +205,22 @@ include __DIR__ . '/../includes/header.php';
 </div>
 
 <script>
-// Image preview
-document.getElementById('image').addEventListener('change', function(e) {
-    const preview = document.getElementById('imagePreview');
-    const file = e.target.files[0];
-    
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            preview.innerHTML = '<img src="' + e.target.result + '" class="img-fluid rounded" style="max-height: 200px;">';
-        };
-        reader.readAsDataURL(file);
-        
-        // Update label
-        e.target.nextElementSibling.textContent = file.name;
-    }
-});
+    // Image preview
+    document.getElementById('image').addEventListener('change', function (e) {
+        const preview = document.getElementById('imagePreview');
+        const file = e.target.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                preview.innerHTML = '<img src="' + e.target.result + '" class="img-fluid rounded" style="max-height: 200px;">';
+            };
+            reader.readAsDataURL(file);
+
+            // Update label
+            e.target.nextElementSibling.textContent = file.name;
+        }
+    });
 </script>
 
 <?php include __DIR__ . '/../includes/footer.php'; ?>
