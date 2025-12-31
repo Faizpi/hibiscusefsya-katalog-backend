@@ -59,6 +59,8 @@ CREATE TABLE IF NOT EXISTS products (
     price DECIMAL(12, 2) NOT NULL DEFAULT 0,
     category_id INT,
     image VARCHAR(255),
+    shopee_link VARCHAR(500),
+    tokopedia_link VARCHAR(500),
     status ENUM('publish', 'draft') DEFAULT 'draft',
     featured TINYINT(1) DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -93,12 +95,13 @@ INSERT INTO products (name, slug, description, price, category_id, status, featu
 ('MBK Eleven Body Lotion', 'mbk-eleven-body-lotion', 'Body lotion dari lini Eleven M.B.K untuk melembabkan dan menutrisi kulit. Tekstur ringan dan cepat menyerap.', 35000, 5, 'publish', 0);
 
 -- =====================================================
--- Table: inspirations (untuk section tips)
+-- Table: inspirations (untuk section tips & artikel)
 -- =====================================================
 CREATE TABLE IF NOT EXISTS inspirations (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(200) NOT NULL,
     slug VARCHAR(200) NOT NULL UNIQUE,
+    excerpt TEXT,
     content TEXT,
     image VARCHAR(255),
     status ENUM('publish', 'draft') DEFAULT 'draft',
@@ -107,8 +110,8 @@ CREATE TABLE IF NOT EXISTS inspirations (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Insert tips & inspirations
-INSERT INTO inspirations (title, slug, content, status) VALUES
-('Tips Mengatasi Bau Badan', 'tips-mengatasi-bau-badan', 'Bau badan disebabkan oleh bakteri yang berkembang di area lembab tubuh. Gunakan deodorant secara teratur dan bedak tabur untuk menyerap keringat berlebih.', 'publish'),
-('Manfaat Bedak Tabur untuk Tubuh', 'manfaat-bedak-tabur', 'Bedak tabur M.B.K membantu menjaga kulit tetap kering, menyerap keringat, dan memberikan aroma harum sepanjang hari. Cocok digunakan setelah mandi.', 'publish'),
-('Cara Memilih Deodorant yang Tepat', 'cara-memilih-deodorant', 'Pilih deodorant yang sesuai dengan jenis kulit Anda. M.B.K menyediakan varian untuk wanita dan pria dengan formula yang aman dan halal.', 'publish');
+INSERT INTO inspirations (title, slug, excerpt, content, status) VALUES
+('Tips Mengatasi Bau Badan', 'tips-mengatasi-bau-badan', 'Tips ampuh mengatasi bau badan agar tetap percaya diri sepanjang hari.', 'Bau badan disebabkan oleh bakteri yang berkembang di area lembab tubuh. Gunakan deodorant secara teratur dan bedak tabur untuk menyerap keringat berlebih.', 'publish'),
+('Manfaat Bedak Tabur untuk Tubuh', 'manfaat-bedak-tabur', 'Kenali berbagai manfaat bedak tabur untuk menjaga kesehatan kulit Anda.', 'Bedak tabur M.B.K membantu menjaga kulit tetap kering, menyerap keringat, dan memberikan aroma harum sepanjang hari. Cocok digunakan setelah mandi.', 'publish'),
+('Cara Memilih Deodorant yang Tepat', 'cara-memilih-deodorant', 'Panduan lengkap memilih deodorant sesuai kebutuhan dan jenis kulit.', 'Pilih deodorant yang sesuai dengan jenis kulit Anda. M.B.K menyediakan varian untuk wanita dan pria dengan formula yang aman dan halal.', 'publish');
 
