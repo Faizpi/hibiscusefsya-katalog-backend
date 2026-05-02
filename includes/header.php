@@ -50,7 +50,7 @@
 <body>
     <!-- Sidebar Overlay -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
-    
+
     <!-- Sidebar -->
     <nav class="sidebar" id="sidebar">
         <button class="sidebar-close" id="sidebarClose">

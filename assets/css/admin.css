@@ -489,13 +489,13 @@ ul {
     .sidebar {
         position: relative;
     }
-    
+
     .sidebar.toggled {
         width: 0;
         overflow: hidden;
         border-right: none;
     }
-    
+
     .sidebar.toggled .sidebar-brand,
     .sidebar.toggled .sidebar-nav {
         opacity: 0;
@@ -517,7 +517,7 @@ ul {
     .sidebar.toggled {
         transform: translateX(0);
     }
-    
+
     .sidebar-close {
         display: flex;
     }
@@ -525,7 +525,7 @@ ul {
     .main-content {
         padding: 1rem;
     }
-    
+
     .topbar {
         padding: 0 1rem;
     }

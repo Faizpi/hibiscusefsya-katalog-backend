@@ -13,7 +13,7 @@
     const sidebarToggle = document.getElementById('sidebarToggle');
     const sidebarClose = document.getElementById('sidebarClose');
     const sidebarOverlay = document.getElementById('sidebarOverlay');
-    
+
     // Open sidebar
     sidebarToggle.addEventListener('click', function () {
         sidebar.classList.toggle('toggled');
@@ -22,7 +22,7 @@
             sidebarOverlay.classList.toggle('active');
         }
     });
-    
+
     // Close sidebar (mobile only)
     if (sidebarClose) {
         sidebarClose.addEventListener('click', function () {
@@ -30,7 +30,7 @@
             sidebarOverlay.classList.remove('active');
         });
     }
-    
+
     // Close sidebar when clicking overlay
     if (sidebarOverlay) {
         sidebarOverlay.addEventListener('click', function () {
@@ -38,9 +38,9 @@
             sidebarOverlay.classList.remove('active');
         });
     }
-    
+
     // Handle resize - reset sidebar state when switching between mobile/desktop
-    window.addEventListener('resize', function() {
+    window.addEventListener('resize', function () {
         if (window.innerWidth > 768) {
             sidebarOverlay.classList.remove('active');
         }
