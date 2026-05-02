@@ -39,6 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $featured = isset($_POST['featured']) ? 1 : 0;
     $shopee_link = sanitize($_POST['shopee_link'] ?? '');
     $tokopedia_link = sanitize($_POST['tokopedia_link'] ?? '');
+        $whatsapp = sanitize($_POST['whatsapp'] ?? '');
     
     // Generate slug if empty
     if (empty($slug)) {
@@ -99,10 +100,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt = db()->prepare("
                     UPDATE products 
                     SET name = ?, slug = ?, description = ?, price = ?, 
-                        category_id = ?, image = ?, shopee_link = ?, tokopedia_link = ?, status = ?, featured = ?
+                        category_id = ?, image = ?, shopee_link = ?, tokopedia_link = ?, whatsapp = ?, status = ?, featured = ?
                     WHERE id = ?
                 ");
-                $stmt->execute([$name, $slug, $description, $price, $category_id, $imageName, $shopee_link, $tokopedia_link, $status, $featured, $id]);
+                $stmt->execute([$name, $slug, $description, $price, $category_id, $imageName, $shopee_link, $tokopedia_link, $whatsapp, $status, $featured, $id]);
                 
                 header('Location: index.php?saved=1');
                 exit();
@@ -122,6 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $product['featured'] = $featured;
     $product['shopee_link'] = $shopee_link;
     $product['tokopedia_link'] = $tokopedia_link;
+    $product['whatsapp'] = $whatsapp;
 }
 
 $pageTitle = 'Edit Produk';
@@ -236,6 +238,14 @@ include __DIR__ . '/../includes/header.php';
                                value="<?php echo sanitize($product['tokopedia_link'] ?? ''); ?>"
                                placeholder="https://www.tokopedia.com/...">
                         <small class="text-muted">Masukkan link produk di Tokopedia (opsional)</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Nomor WhatsApp</label>
+                        <input type="text" name="whatsapp" class="form-control"
+                               value="<?php echo sanitize($product['whatsapp'] ?? ''); ?>"
+                               placeholder="62812... (masukkan tanpa + atau spasi)">
+                        <small class="text-muted">Nomor WhatsApp untuk tombol 'Hubungi via WhatsApp' (opsional, gunakan format internasional tanpa +, contoh: 6281234567890)</small>
                     </div>
                     
                     <hr>
